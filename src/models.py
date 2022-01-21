@@ -7,12 +7,24 @@ class User(db.Model):
     email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(100), unique=False, nullable=False)
 
-    # def serialize(self):
-    #     return {
-    #         "id": self.id,
-    #         "email": self.email,
-    #         # do not serialize the password, its a security breach
-    #     }
+    @classmethod
+    def register(cls, new_user):
+        new_user = cls(**new_user)
+        db.session.add(new_user)
+        try:
+            db.session.commit()
+            return new_user
+        except Exception as error:
+            db.session.rollback()
+            print(error.args)
+            return None
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            # do not serialize the password, its a security breach
+        }
 
 class User_recipes(db.Model):
     id = db.Column(db.Integer, primary_key=True)

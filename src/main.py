@@ -31,13 +31,35 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/user', methods=['GET'])
-def handle_hello():
+def handle_user():
 
     response_body = {
         "msg": "Wow, this is your GET /user response "
     }
 
     return jsonify(response_body), 200
+
+
+@app.route('/logup', methods=['POST'])
+def handle_log_up():
+    body = request.json
+    new_user = User.register(body)
+    if new_user is not None:
+        return jsonify(new_user.serialize()), 201
+    else:
+        return jsonify({"message":"Oops, check if you don't have empty fields"}), 500
+
+
+@app.route('/login', methods=['POST'])
+def handle_log_in():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    user = User.query.filter_by(email = email, password = password).one_or_none()
+    if user is not None:
+        return jsonify({"user_id": user.id, "email": user.email}), 200
+    else:
+        return jsonify({"message":"Put your correct credentials"}), 401
+
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
