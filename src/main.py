@@ -9,12 +9,15 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 #from models import Person
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = os.environ.get('FLASK_APP_KEY')
+jwt = JWTManager(app)
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
@@ -36,7 +39,7 @@ def handle_user():
     response = []
     for user in users:
         response.append(user.serialize())
-        return jsonify(response)
+        return jsonify(response), 200
 
 
 @app.route('/logup', methods=['POST'])
@@ -55,7 +58,8 @@ def handle_log_in():
     password = request.json.get("password", None)
     user = User.query.filter_by(email = email, password = password).one_or_none()
     if user is not None:
-        return jsonify({"user_id": user.id, "email": user.email}), 200
+        token = create_access_token(identity = user.id)
+        return jsonify({"token": token, "user_id": user.id, "email": user.email}), 200
     else:
         return jsonify({"message":"Put your correct credentials"}), 401
 
