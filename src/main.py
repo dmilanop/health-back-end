@@ -32,12 +32,11 @@ def sitemap():
 
 @app.route('/user', methods=['GET'])
 def handle_user():
-
-    response_body = {
-        "msg": "Wow, this is your GET /user response "
-    }
-
-    return jsonify(response_body), 200
+    users = User.query.all()
+    response = []
+    for user in users:
+        response.append(user.serialize())
+        return jsonify(response)
 
 
 @app.route('/logup', methods=['POST'])

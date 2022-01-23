@@ -6,6 +6,14 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(100), unique=False, nullable=False)
+    name = db.Column(db.String(100), nullable=False, unique=False)
+    last_name = db.Column(db.String(150), nullable=False, unique=False)
+    gender = db.Column(db.String(80), nullable=False, unique=False)
+    date_of_birth = db.Column(db.String(25), nullable=False, unique=False)
+    ailments = db.Column(db.String(60), nullable=False, unique=False)
+    exercises = db.Column(db.String(60), nullable=False, unique=False)
+    user_recipes = db.relationship('User_recipes', backref='user', lazy=True)
+    medical_history = db.relationship('Medical_History', backref='user', lazy=True)
 
     @classmethod
     def register(cls, new_user):
@@ -23,33 +31,32 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            "name": self.name,
+            "last_name": self.last_name,
+            "gender": self.gender,
+            "date_of_birth": self.date_of_birth,
+            "ailments": self.ailments,
+            "exercises": self.exercises
             # do not serialize the password, its a security breach
         }
 
 class User_recipes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    # recipes_id = db.Column(db.Integer, db.ForeignKey('recipes.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    recipes = db.relationship('Recipes', backref='user_recipes', lazy=True)
+    active = db.Column(db.Boolean, nullable=False, unique=False, default=True)
 
 class Recipes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_recipes_id = db.Column(db.Integer, db.ForeignKey('user_recipes.id'), nullable=False)
     recipes_name = db.Column(db.String(150), nullable=False, unique=True)
     description = db.Column(db.String(250), nullable=False, unique=True)
 
-class User_information(db.Model):
+class Medical_History(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # user_id = db.Column(db.Integer, ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False, unique=False)
-    last_name = db.Column(db.String(150), nullable=False, unique=False)
-    gender = db.Column(db.String(80), nullable=False, unique=False)
-    date_of_birth =db.Column(db.Integer, nullable=False, unique=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     height = db.Column(db.Float, nullable=False, unique=False)
     weight = db.Column(db.Float, nullable=False, unique=False)
-    ailments = db.Column(db.Boolean, nullable=False, unique=False)
-    exercises = db.Column(db.Boolean, nullable=False, unique=False)
-
-class Medical_history(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
     diabetes = db.Column(db.Boolean, nullable=False, unique=False)
     uric_acid = db.Column(db.Boolean, nullable=False, unique=False)
     gastric_ulcers = db.Column(db.Boolean, nullable=False, unique=False)
