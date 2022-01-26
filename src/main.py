@@ -37,9 +37,13 @@ def sitemap():
 def handle_user():
     users = User.query.all()
     response = []
-    for user in users:
-        response.append(user.serialize())
+    if users:
+        for user in users:
+            response.append(user.serialize())
         return jsonify(response), 200
+    else:
+        return jsonify([]), 200
+    return jsonify({"message":"Bad request"}), 400
 
 
 @app.route('/logup', methods=['POST'])
