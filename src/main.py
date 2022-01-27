@@ -46,17 +46,8 @@ def handle_user():
     return jsonify({"message":"Bad request"}), 400
 
 
-# @app.route('/logup', methods=['POST'])
-# def handle_log_up():
-#     body = request.json
-#     new_user = User.register(body)
-#     if new_user is not None:
-#         return jsonify(new_user.serialize()), 201
-#     else:
-#         return jsonify({"message":"Oops, check if you don't have empty fields"}), 500
-
 @app.route("/<string:nature>", methods=['POST'])
-def handle_nature():
+def handle_nature(nature):
     body = request.json
     if nature == "logup":
         new_user = User.register(body)
@@ -64,7 +55,7 @@ def handle_nature():
             return jsonify(new_user.serialize()), 201
         else:
             return jsonify({"message": "Oops, check if you don't have empty fields"}), 500    
-    elif nature == "medical_history":
+    if nature == "medical_history":
         new_history = Medical_History.register(body)
         if new_history is not None:
             return jsonify(new_history.serialize()), 201
@@ -83,17 +74,7 @@ def handle_log_in():
     else:
         return jsonify({"message":"Put your correct credentials"}), 401
 
-# @app.route('/medical_history', methods=['Post'])
-# def handle_history():
-#     body = request.json
-#     new_history = Medical_History.register(body)
-#     if new_history is not None:
-#         return jsonify(new_history.serialize()), 201
-#     else:
-#         return jsonify({"messege": "Oops, check if you don't have empty fields"}), 500            
 
-
-# this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT, debug=False)

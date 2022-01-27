@@ -70,33 +70,33 @@ class Medical_History(db.Model):
     inflametion_of_the_colon = db.Column(db.String(10), nullable=False, unique=False)
     heart_problems = db.Column(db.String(10), nullable=False, unique=False)
 
-        @classmethod
-        def register(cls, new_history):
-            new_history = cls(**new_history)
-            db.session.add(new_history)
-            try:
-                db.session.commit()
-                return new_history
-            except Exception as error:
-                db.session.rollback()    
-                print(error.args)
-                return None
+    @classmethod
+    def register(cls, new_history):
+        new_history = cls(**new_history)
+        db.session.add(new_history)
+        try:
+            db.session.commit()
+            return new_history
+        except Exception as error:
+            db.session.rollback()    
+            print(error.args)
+            return None
 
-        def serialize(self):
-            return {
-                "user_id" : self.user_id,
-                "height": self.height,
-                "weight": self.weight,
-                "diabetes": self.diabetes,
-                "uric_acid": self.uric_acid,
-                "gastric_ulcers": self.gastric_ulcers,
-                "gastritis": self.gastric_ulcers,
-                "cholesterol": self.cholesterol,
-                "triglycerides": self.triglycerides,
-                "dairy_intolerance": self.dairy_intolerance,
-                "celiac": self.celiac,
-                "obesity": self.obesity,
-                "kidney_stones": self.kidney_stones,
-                "inflametion_of_the_colon": self.inflametion_of_the_colon,
-                "heart_problems": self.heart_problems
-            }
+    def serialize(self):
+        return {
+            "user_id": self.user_id,
+            "height": self.height,
+            "weight": self.weight,
+            "diabetes": self.diabetes,
+            "uric_acid": self.uric_acid,
+            "gastric_ulcers": self.gastric_ulcers,
+            "gastritis": self.gastric_ulcers,
+            "cholesterol": self.cholesterol,
+            "triglycerides": self.triglycerides,
+            "dairy_intolerance": self.dairy_intolerance,
+            "celiac": self.celiac,
+            "obesity": self.obesity,
+            "kidney_stones": self.kidney_stones,
+            "inflametion_of_the_colon": self.inflametion_of_the_colon,
+            "heart_problems": self.heart_problems
+        }
