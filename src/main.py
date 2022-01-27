@@ -74,6 +74,18 @@ def handle_log_in():
     else:
         return jsonify({"message":"Put your correct credentials"}), 401
 
+@app.route('/delete_acount/<int:user_id>', methods=['DELETE'])        
+def handle_delete_user(user_id):
+    user = User.query.filter_by(id = user_id).one_or_none()
+    if user is not None:
+        user_delete = user.delete()
+        if user_delete == True:
+            return jsonify([]), 204
+        else:
+            return jsonify({"message": "oops, method does not work, please try again"}), 500
+    else:
+        return jsonify({"message": "oops, not found"}), 404            
+
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))

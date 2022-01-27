@@ -40,6 +40,16 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
 
+    def delete(self):
+        db.session.delete(self)
+        try:
+            db.session.commit()
+            return True
+        except Exception as error:
+            db.session.rollback()
+            return False    
+
+
 class User_recipes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
