@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Medical_History
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 #from models import Person
 
@@ -46,21 +46,20 @@ def handle_user():
     return jsonify({"message":"Bad request"}), 400
 
 
-@app.route("/<string:nature>", methods=['POST'])
+@app.route("/logup", methods=['POST'])
 def handle_nature(nature):
     body = request.json
-    if nature == "logup":
-        new_user = User.register(body)
-        if new_user is not None:
-            return jsonify(new_user.serialize()), 201
-        else:
-            return jsonify({"message": "Oops, check if you don't have empty fields"}), 500    
-    if nature == "medical_history":
-        new_history = Medical_History.register(body)
-        if new_history is not None:
-            return jsonify(new_history.serialize()), 201
-        else:
-            return jsonify({"messge": "Oops, check if you don't have empty fields"}), 500   
+    new_user = User.register(body)
+    if new_user is not None:
+        return jsonify(new_user.serialize()), 201
+    else:
+        return jsonify({"message": "Oops, check if you don't have empty fields"}), 500    
+    # if nature == "medical_history":
+    #     new_history = Medical_History.register(body)
+    #     if new_history is not None:
+    #         return jsonify(new_history.serialize()), 201
+    #     else:
+    #         return jsonify({"messge": "Oops, check if you don't have empty fields"}), 500   
 
 
 @app.route('/login', methods=['POST'])
@@ -84,8 +83,51 @@ def handle_delete_user(user_id):
         else:
             return jsonify({"message": "oops, method does not work, please try again"}), 500
     else:
-        return jsonify({"message": "oops, not found"}), 404            
+        return jsonify({"message": "oops, not found"}), 404   
 
+@app.route('/medical_history', methods=['POST'])
+@jwt_required
+def handle_medical_history():
+    height = request.json["height"]
+    weight = request.json["weight"]
+    diabetes = request.json["diabetes"]
+    uric_acid = request.json["uric_acid"]
+    gastric_ulcers = request.json["gastric_ulcers"]
+    gastritis = request.json["gastritis"]
+    cholesterol = request.json["cholesterol"]
+    triglycerides = request.json["triglycerides"]
+    dairy_intolerance = request.json["dairy_intolerance"]
+    celiac = request.json["celiac"]
+    obesity = request.json["obesity"]
+    kidney_stones = request.json["kidney_stones"]
+    inflametion_of_the_colon = request.json["inflamation_of_the_colon"]
+    heart_problems = request.json["heart_ploblems"]  
+
+    new_history = Medical_History(
+        user_id = get_jwt_identity()
+        height =  height
+        weight = weight
+        diabetes = diabetes
+        uric_acid = uric_acid
+        gastric_ulcers = gastric_ulcers
+        gastritis = gastritis
+        cholesterol = cholesterol
+        triglycerides = triglycerides
+        dairy_intolerance = dairy_intolerance
+        celiac = celiac
+        obesity = obesity
+        kidney_stones = kidney_stones
+        inflametion_of_the_colon = inflamation_of_the_colon
+        heart_problems = heart_ploblems  
+    )
+
+    db.session.add(new_history)
+    try:
+        db.session.commit()
+        return jsonify(new_history.serialize()), 201
+    except Exception as error:
+        db.session.rollback()
+        return jsonify(error.args), 500    
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
