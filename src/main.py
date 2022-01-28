@@ -47,7 +47,7 @@ def handle_user():
 
 
 @app.route("/logup", methods=['POST'])
-def handle_nature(nature):
+def handle_nature():
     body = request.json
     new_user = User.register(body)
     if new_user is not None:
@@ -86,7 +86,7 @@ def handle_delete_user(user_id):
         return jsonify({"message": "oops, not found"}), 404   
 
 @app.route('/medical_history', methods=['POST'])
-@jwt_required
+@jwt_required()
 def handle_medical_history():
     height = request.json["height"]
     weight = request.json["weight"]
@@ -100,8 +100,8 @@ def handle_medical_history():
     celiac = request.json["celiac"]
     obesity = request.json["obesity"]
     kidney_stones = request.json["kidney_stones"]
-    inflametion_of_the_colon = request.json["inflamation_of_the_colon"]
-    heart_problems = request.json["heart_ploblems"]  
+    inflametion_of_the_colon = request.json["inflametion_of_the_colon"]
+    heart_problems = request.json["heart_problems"]  
 
     new_history = Medical_History(
         user_id = get_jwt_identity(),
@@ -117,8 +117,8 @@ def handle_medical_history():
         celiac = celiac,
         obesity = obesity,
         kidney_stones = kidney_stones,
-        inflametion_of_the_colon = inflamation_of_the_colon,
-        heart_problems = heart_ploblems  
+        inflametion_of_the_colon = inflametion_of_the_colon,
+        heart_problems = heart_problems  
     )
 
     db.session.add(new_history)
