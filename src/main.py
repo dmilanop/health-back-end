@@ -104,20 +104,20 @@ def handle_medical_history():
     heart_problems = request.json["heart_ploblems"]  
 
     new_history = Medical_History(
-        user_id = get_jwt_identity()
-        height =  height
-        weight = weight
-        diabetes = diabetes
-        uric_acid = uric_acid
-        gastric_ulcers = gastric_ulcers
-        gastritis = gastritis
-        cholesterol = cholesterol
-        triglycerides = triglycerides
-        dairy_intolerance = dairy_intolerance
-        celiac = celiac
-        obesity = obesity
-        kidney_stones = kidney_stones
-        inflametion_of_the_colon = inflamation_of_the_colon
+        user_id = get_jwt_identity(),
+        height =  height,
+        weight = weight,
+        diabetes = diabetes,
+        uric_acid = uric_acid,
+        gastric_ulcers = gastric_ulcers,
+        gastritis = gastritis,
+        cholesterol = cholesterol,
+        triglycerides = triglycerides,
+        dairy_intolerance = dairy_intolerance,
+        celiac = celiac,
+        obesity = obesity,
+        kidney_stones = kidney_stones,
+        inflametion_of_the_colon = inflamation_of_the_colon,
         heart_problems = heart_ploblems  
     )
 
