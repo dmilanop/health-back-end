@@ -53,13 +53,7 @@ def handle_nature():
     if new_user is not None:
         return jsonify(new_user.serialize()), 201
     else:
-        return jsonify({"message": "Oops, check if you don't have empty fields"}), 500    
-    # if nature == "medical_history":
-    #     new_history = Medical_History.register(body)
-    #     if new_history is not None:
-    #         return jsonify(new_history.serialize()), 201
-    #     else:
-    #         return jsonify({"messge": "Oops, check if you don't have empty fields"}), 500   
+        return jsonify({"message": "Oops, check if you don't have empty fields"}), 500      
 
 
 @app.route('/login', methods=['POST'])
