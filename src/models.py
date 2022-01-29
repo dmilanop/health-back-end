@@ -30,11 +30,7 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            "name": self.name,
-            "last_name": self.last_name,
-            "gender": self.gender,
-            "date_of_birth": self.date_of_birth,
-            "exercises": self.exercises
+            https://3000-dmilanop-healthbackend-nnp0yf64gx1.ws-us29.gitpod.io
             # do not serialize the password, its a security breach
         }
 
@@ -75,7 +71,7 @@ class Medical_History(db.Model):
     celiac = db.Column(db.String(10), nullable=False, unique=False)
     obesity = db.Column(db.String(10), nullable=False, unique=False)
     kidney_stones = db.Column(db.String(10), nullable=False, unique=False)
-    inflamation_of_the_colon = db.Column(db.String(10), nullable=False, unique=False)
+    inflametion_of_the_colon = db.Column(db.String(10), nullable=False, unique=False)
     heart_problems = db.Column(db.String(10), nullable=False, unique=False)
 
     def serialize(self):

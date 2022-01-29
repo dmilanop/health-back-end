@@ -52,17 +52,10 @@ def handle_nature():
     new_user = User.register(body)
     if new_user is not None:
         try:
-            email = request.json.get("email", None)
-            password = request.json.get("password", None)
-            user = User.query.filter_by(email = email, password = password).one_or_none()
-            if user is not None:
-                token = create_access_token(identity = user.id)
-                return jsonify({"token": token, "user_id": user.id, "email": user.email}), 200
-            else:
-                return jsonify({"message":"Put your correct credentials"}), 401
+            token = create_access_token(identity = new_user.id)
+            return jsonify({"token": token, "user_id": new_user.id, "email": new_user.email}), 200
         except Exception as error:
-            
-        #return jsonify(new_user.serialize()), 201
+            return jsonify({"message": "oh oh, can't create token"}), 500
     else:
         return jsonify({"message": "Oops, check if you don't have empty fields"}), 500      
 
