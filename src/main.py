@@ -51,7 +51,18 @@ def handle_nature():
     body = request.json
     new_user = User.register(body)
     if new_user is not None:
-        return jsonify(new_user.serialize()), 201
+        try:
+            email = request.json.get("email", None)
+            password = request.json.get("password", None)
+            user = User.query.filter_by(email = email, password = password).one_or_none()
+            if user is not None:
+                token = create_access_token(identity = user.id)
+                return jsonify({"token": token, "user_id": user.id, "email": user.email}), 200
+            else:
+                return jsonify({"message":"Put your correct credentials"}), 401
+        except Exception as error:
+            
+        #return jsonify(new_user.serialize()), 201
     else:
         return jsonify({"message": "Oops, check if you don't have empty fields"}), 500      
 
@@ -80,7 +91,7 @@ def handle_delete_user(user_id):
         return jsonify({"message": "oops, not found"}), 404   
 
 @app.route('/medical_history', methods=['POST'])
-@jwt_required
+@jwt_required()
 def handle_medical_history():
     height = request.json["height"]
     weight = request.json["weight"]

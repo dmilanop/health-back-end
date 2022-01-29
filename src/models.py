@@ -75,7 +75,7 @@ class Medical_History(db.Model):
     celiac = db.Column(db.String(10), nullable=False, unique=False)
     obesity = db.Column(db.String(10), nullable=False, unique=False)
     kidney_stones = db.Column(db.String(10), nullable=False, unique=False)
-    inflametion_of_the_colon = db.Column(db.String(10), nullable=False, unique=False)
+    inflamation_of_the_colon = db.Column(db.String(10), nullable=False, unique=False)
     heart_problems = db.Column(db.String(10), nullable=False, unique=False)
 
     def serialize(self):
