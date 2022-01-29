@@ -98,7 +98,7 @@ def handle_medical_history():
     celiac = request.json["celiac"]
     obesity = request.json["obesity"]
     kidney_stones = request.json["kidney_stones"]
-    inflamation_of_the_colon = request.json["inflamation_of_the_colon"]
+    inflammation_of_the_colon = request.json["inflammation_of_the_colon"]
     heart_problems = request.json["heart_problems"]  
 
     new_history = Medical_History(
@@ -115,7 +115,7 @@ def handle_medical_history():
         celiac = celiac,
         obesity = obesity,
         kidney_stones = kidney_stones,
-        inflamation_of_the_colon = inflamation_of_the_colon,
+        inflammation_of_the_colon = inflammation_of_the_colon,
         heart_problems = heart_problems  
     )
 
@@ -125,7 +125,8 @@ def handle_medical_history():
         return jsonify(new_history.serialize()), 201
     except Exception as error:
         db.session.rollback()
-        return jsonify(error.args), 500    
+        return jsonify(error.args), 500 
+         
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
