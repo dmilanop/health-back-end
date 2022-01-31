@@ -81,7 +81,7 @@ class Medical_History(db.Model):
 
     def serialize(self):
         return {
-            # "user_id": self.user_id,
+            "user_id": self.user_id,
             "height": self.height,
             "weight": self.weight,
             "diabetes": self.diabetes,

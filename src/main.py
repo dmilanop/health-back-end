@@ -33,17 +33,28 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_user():
-    users = User.query.all()
+@app.route('/<string:nature>', methods=['GET'])
+def handle_user(nature):
     response = []
-    if users:
-        for user in users:
-            response.append(user.serialize())
-        return jsonify(response), 200
-    else:
-        return jsonify([]), 500
-    return jsonify({"message":"Bad request"}), 400   
+    if nature == 'user':
+        users = User.query.all()
+        if users:
+            for user in users:
+                response.append(user.serialize())
+            return jsonify(response), 200
+        else:
+            return jsonify([]), 500
+        return jsonify({"message":"Bad request"}), 400 
+
+    if nature == 'medical_history':
+        histories = Medical_History.query.all()
+        if histories:
+            for history in histories:
+                response.append(history.serialize())
+            return jsonify(response), 200
+        else:
+            return jsonify([]), 500
+        return jsonify({"message":"Bad request"}), 400 
 
 
 @app.route("/logup", methods=['POST'])
@@ -71,7 +82,7 @@ def handle_log_in():
     else:
         return jsonify({"message":"Put your correct credentials"}), 401
 
-@app.route('/delete_acount/<int:user_id>', methods=['DELETE'])        
+@app.route('/user/<int:user_id>', methods=['DELETE'])        
 def handle_delete_user(user_id):
     user = User.query.filter_by(id = user_id).one_or_none()
     if user is not None:
@@ -83,61 +94,49 @@ def handle_delete_user(user_id):
     else:
         return jsonify({"message": "oops, not found"}), 404   
 
-@app.route('/medical_history', methods=['POST','GET'])
+@app.route('/medical_history', methods=['POST'])
 @jwt_required()
 def handle_medical_history():
-    if method == 'POST':
-        height = request.json["height"]
-        weight = request.json["weight"]
-        diabetes = request.json["diabetes"]
-        uric_acid = request.json["uric_acid"]
-        gastric_ulcers = request.json["gastric_ulcers"]
-        gastritis = request.json["gastritis"]
-        cholesterol = request.json["cholesterol"]
-        triglycerides = request.json["triglycerides"]
-        dairy_intolerance = request.json["dairy_intolerance"]
-        celiac = request.json["celiac"]
-        obesity = request.json["obesity"]
-        kidney_stones = request.json["kidney_stones"]
-        inflammation_of_the_colon = request.json["inflammation_of_the_colon"]
-        heart_problems = request.json["heart_problems"]  
+    height = request.json["height"]
+    weight = request.json["weight"]
+    diabetes = request.json["diabetes"]
+    uric_acid = request.json["uric_acid"]
+    gastric_ulcers = request.json["gastric_ulcers"]
+    gastritis = request.json["gastritis"]
+    cholesterol = request.json["cholesterol"]
+    triglycerides = request.json["triglycerides"]
+    dairy_intolerance = request.json["dairy_intolerance"]
+    celiac = request.json["celiac"]
+    obesity = request.json["obesity"]
+    kidney_stones = request.json["kidney_stones"]
+    inflammation_of_the_colon = request.json["inflammation_of_the_colon"]
+    heart_problems = request.json["heart_problems"]  
 
-        new_history = Medical_History(
-            user_id = get_jwt_identity(),
-            height =  height,
-            weight = weight,
-            diabetes = diabetes,
-            uric_acid = uric_acid,
-            gastric_ulcers = gastric_ulcers,
-            gastritis = gastritis,
-            cholesterol = cholesterol,
-            triglycerides = triglycerides,
-            dairy_intolerance = dairy_intolerance,
-            celiac = celiac,
-            obesity = obesity,
-            kidney_stones = kidney_stones,
-            inflammation_of_the_colon = inflammation_of_the_colon,
-            heart_problems = heart_problems  
-            )
+    new_history = Medical_History(
+        user_id = get_jwt_identity(),
+        height =  height,
+        weight = weight,
+        diabetes = diabetes,
+        uric_acid = uric_acid,
+        gastric_ulcers = gastric_ulcers,
+        gastritis = gastritis,
+        cholesterol = cholesterol,
+        triglycerides = triglycerides,
+        dairy_intolerance = dairy_intolerance,
+        celiac = celiac,
+        obesity = obesity,
+        kidney_stones = kidney_stones,
+        inflammation_of_the_colon = inflammation_of_the_colon,
+        heart_problems = heart_problems  
+    )
 
-        db.session.add(new_history)
-        try:
-            db.session.commit()
-            return jsonify(new_history.serialize()), 201
-        except Exception as error:
-            db.session.rollback()
-            return jsonify(error.args), 500   
-
-    if method == 'GET':
-        histories == Medical_History.query.all()
-        if histories:
-            for history in histories:
-                response.append(history.serialize())
-            return jsonify(response), 200
-        else:
-            return jsonify([]), 500
-        return jsonify({"message":"Bad request"}), 400
-
+    db.session.add(new_history)
+    try:
+        db.session.commit()
+        return jsonify(new_history.serialize()), 201
+    except Exception as error:
+        db.session.rollback()
+        return jsonify(error.args), 500   
 
 
 if __name__ == '__main__':
