@@ -82,8 +82,10 @@ def handle_log_in():
     else:
         return jsonify({"message":"Put your correct credentials"}), 401
 
-@app.route('/user/<int:user_id>', methods=['DELETE'])        
-def handle_delete_user(user_id):
+@app.route('/delete_acount>', methods=['DELETE'])   
+@jwt_required()   
+def handle_delete_user():
+    user_id = get_jwt_identity()
     user = User.query.filter_by(id = user_id).one_or_none()
     if user is not None:
         user_delete = user.delete()
@@ -130,13 +132,21 @@ def handle_medical_history():
         heart_problems = heart_problems  
     )
 
-    db.session.add(new_history)
-    try:
-        db.session.commit()
-        return jsonify(new_history.serialize()), 201
-    except Exception as error:
-        db.session.rollback()
-        return jsonify(error.args), 500   
+    if methods == 'POST':
+        db.session.add(new_history)
+        try:
+            db.session.commit()
+            return jsonify(new_history.serialize()), 201
+        except Exception as error:
+            db.session.rollback()
+            return jsonify(error.args), 500 
+    if methods == 'PUT':
+        try:
+            db.session.commit()
+            return jsonify(new_history.serialize()), 201
+        except Exception as error:
+            db.session.rollback()
+            return jsonify(error.args), 500        
 
 
 if __name__ == '__main__':
