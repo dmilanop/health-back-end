@@ -11,7 +11,6 @@ class User(db.Model):
     gender = db.Column(db.String(80), nullable=False, unique=False)
     date_of_birth = db.Column(db.String(25), nullable=False, unique=False)
     exercises = db.Column(db.String(60), nullable=False, unique=False)
-    user_recipes = db.relationship('User_recipes', backref='user', lazy=True)
     medical_history = db.relationship('Medical_History', backref='user', lazy=True)
 
     @classmethod
@@ -40,6 +39,8 @@ class User(db.Model):
         }
 
     def delete(self):
+        delete_acount = Medical_History.query.filter_by(user_id=self.id).one_or_none()
+        delete_acount.delete()
         db.session.delete(self)
         try:
             db.session.commit()
@@ -47,19 +48,6 @@ class User(db.Model):
         except Exception as error:
             db.session.rollback()
             return False    
-
-
-class User_recipes(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    recipes = db.relationship('Recipes', backref='user_recipes', lazy=True)
-    active = db.Column(db.Boolean, nullable=False, unique=False, default=True)
-
-class Recipes(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_recipes_id = db.Column(db.Integer, db.ForeignKey('user_recipes.id'), nullable=False)
-    recipes_name = db.Column(db.String(150), nullable=False, unique=True)
-    description = db.Column(db.String(250), nullable=False, unique=True)
 
 class Medical_History(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -97,3 +85,22 @@ class Medical_History(db.Model):
             "inflammation_of_the_colon": self.inflammation_of_the_colon,
             "heart_problems": self.heart_problems
         }
+    
+    def delete(self):
+        db.session.delete(self)
+        try:
+            db.session.commit()
+            return True
+        except Exception as error:
+            db.session.rollback()
+            return False  
+    
+    def put(self, attribute):
+        for key, value in attribute.items():
+            setattr(self, key, value)
+        try:
+            db.session.commit()
+            return True
+        except Exception as error:
+            db.session.rollback()
+            return False

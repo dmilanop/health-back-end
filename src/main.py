@@ -82,7 +82,7 @@ def handle_log_in():
     else:
         return jsonify({"message":"Put your correct credentials"}), 401
 
-@app.route('/delete_acount>', methods=['DELETE'])   
+@app.route('/delete_acount', methods=['DELETE'])   
 @jwt_required()   
 def handle_delete_user():
     user_id = get_jwt_identity()
@@ -96,7 +96,7 @@ def handle_delete_user():
     else:
         return jsonify({"message": "oops, not found"}), 404   
 
-@app.route('/medical_history', methods=['POST'])
+@app.route('/medical_history', methods=['POST','PUT'])
 @jwt_required()
 def handle_medical_history():
     height = request.json["height"]
@@ -114,25 +114,24 @@ def handle_medical_history():
     inflammation_of_the_colon = request.json["inflammation_of_the_colon"]
     heart_problems = request.json["heart_problems"]  
 
-    new_history = Medical_History(
-        user_id = get_jwt_identity(),
-        height =  height,
-        weight = weight,
-        diabetes = diabetes,
-        uric_acid = uric_acid,
-        gastric_ulcers = gastric_ulcers,
-        gastritis = gastritis,
-        cholesterol = cholesterol,
-        triglycerides = triglycerides,
-        dairy_intolerance = dairy_intolerance,
-        celiac = celiac,
-        obesity = obesity,
-        kidney_stones = kidney_stones,
-        inflammation_of_the_colon = inflammation_of_the_colon,
-        heart_problems = heart_problems  
-    )
-
-    if methods == 'POST':
+    if request.method == 'POST':
+        new_history = Medical_History(
+            user_id = get_jwt_identity(),
+            height =  height,
+            weight = weight,
+            diabetes = diabetes,
+            uric_acid = uric_acid,
+            gastric_ulcers = gastric_ulcers,
+            gastritis = gastritis,
+            cholesterol = cholesterol,
+            triglycerides = triglycerides,
+            dairy_intolerance = dairy_intolerance,
+            celiac = celiac,
+            obesity = obesity,
+            kidney_stones = kidney_stones,
+            inflammation_of_the_colon = inflammation_of_the_colon,
+            heart_problems = heart_problems  
+        )
         db.session.add(new_history)
         try:
             db.session.commit()
@@ -140,13 +139,14 @@ def handle_medical_history():
         except Exception as error:
             db.session.rollback()
             return jsonify(error.args), 500 
-    if methods == 'PUT':
-        try:
-            db.session.commit()
-            return jsonify(new_history.serialize()), 201
-        except Exception as error:
-            db.session.rollback()
-            return jsonify(error.args), 500        
+    if request.method == 'PUT':
+        user_id = get_jwt_identity()
+        old_history = Medical_History.query.filter_by(user_id= user_id).one_or_none()
+        modified = old_history.put(request.json)
+        if modified:
+            return jsonify(old_history.serialize()), 201
+        else:
+            return jsonify({"message":"Try again"}), 500        
 
 
 if __name__ == '__main__':
