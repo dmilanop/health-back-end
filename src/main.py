@@ -86,7 +86,7 @@ def handle_nature():
     if new_user is not None:
         try:
             token = create_access_token(identity = new_user.id)
-            return jsonify({"token": token, "user_id": new_user.id, "email": new_user.email}), 201
+            return jsonify({"token": token, "user_id": new_user.id, "email": new_user.email, "name": new_user.name}), 201
         except Exception as error:
             return jsonify({"message": "oh oh, can't create token"}), 500
     else:
