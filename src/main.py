@@ -54,7 +54,29 @@ def handle_user(nature):
             return jsonify(response), 200
         else:
             return jsonify([]), 500
-        return jsonify({"message":"Bad request"}), 400 
+        return jsonify({"message":"Bad request"}), 400
+
+
+@app.route('/id_medical_history', methods=['GET'])
+@jwt_required()
+def handle_medical_history_id():
+    user_id = get_jwt_identity()
+    try:
+        medical_information = Medical_History.query.filter_by(user_id= user_id).one_or_none()
+        return jsonify(medical_information.serialize()), 200
+    except Exception as error:
+        return({"message":"Does not exist"}), 404
+
+
+@app.route('/id_user', methods=['GET'])
+@jwt_required()
+def handle_user_id():
+    user_id = get_jwt_identity()
+    try:
+        user_information = User.query.filter_by(id= user_id).one_or_none()
+        return jsonify(user_information.serialize()), 200
+    except Exception as error:
+        return({"message":"Does not exist"}), 404
 
 
 @app.route("/logup", methods=['POST'])
@@ -78,7 +100,7 @@ def handle_log_in():
     user = User.query.filter_by(email = email, password = password).one_or_none()
     if user is not None:
         token = create_access_token(identity = user.id)
-        return jsonify({"token": token, "user_id": user.id, "email": user.email}), 200
+        return jsonify({"token": token, "user_id": user.id, "email": user.email, "name": user.name}), 200
     else:
         return jsonify({"message":"Put your correct credentials"}), 401
 
